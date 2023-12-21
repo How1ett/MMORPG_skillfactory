@@ -1,0 +1,78 @@
+{% extends 'default.html' %}
+{% block title %}Comments{% endblock title %}
+
+{% block content %}
+    <br>
+    <h3>Фильтр комментов на мои объявления:</h3><br>
+	<form method="POST">
+		{% csrf_token %}
+        {{ form }}
+		<input class="btn btn-secondary" type="submit" value="Показать">
+	</form><br>
+    {% if title %}
+        <h3>Комменты на мое объявление</h3>
+        <a href="/advertisement/{{ comment_post_id }}" style="font-size: 20px;"><b>{{ title }}:</b></a><br>
+        {% if filter_comments %}
+            {% for comment in filter_comments %}
+                <a><b>Отклик: </b></a>{{ comment.text }}<br>
+                <span style="font-size: 12px;"><b>Автор отклика: {{ comment.author.username }} |
+                    дата публикации отклика: {{ comment.time_create|date:'d.M.Y' }} г.</b></span><br>
+                {% if comment.moderation == False %}
+                    <a href="/comment/accept/{{ comment.id }}" style="font-size: 12px; color:green"><b>Утвердить комментарий</b></a>
+                    <a>&nbsp;&nbsp;&nbsp;</a>
+                    <a href="/comment/delete/{{ comment.id }}" style="font-size: 12px; color:red"><b>Удалить комментарий</b></a>
+                {% else %}
+                    <a style="font-size: 14px; color:green"><b>Комментарий утвержден</b></a>
+                {% endif %}
+                <br><br>
+            {% endfor %}
+        {% else %}
+            <br>
+            <h5>Комментариев нет!</h5>
+        {% endif %}
+    {% else %}
+        <h3>Комментарии на все мои объявления:</h3>
+        {% if filter_comments %}
+            {% for comment in filter_comments %}
+                <a><b>Объявление:</b></a>
+                <a href="/advertisement/{{ comment.advertisement_id }}" style="font-size: 20px;"><b>{{ comment.advertisement.title }}</b></a><br>
+                <span style="font-size: 12px;"><b>Дата публикации объявления: {{ comment.advertisement.time_create|date:'d.M.Y' }} г.</b>
+                </span><br>
+                <a><b>Коммент: </b></a>{{ comment.text }}<br>
+                <span style="font-size: 12px;"><b>Автор коммента: {{ comment.author.username }} |
+                    Дата публикации коммента: {{ comment.time_create|date:'d.M.Y' }} г.</b></span><br>
+                {% if comment.moderation == False %}
+                    <a href="/comment/accept/{{ comment.id }}" style="font-size: 12px; color:green"><b>Утвердить комментарий</b></a>
+                    <a>&nbsp;&nbsp;&nbsp;</a>
+                    <a href="/comment/delete/{{ comment.id }}" style="font-size: 12px; color:red"><b>Удалить комментарий</b></a>
+                {% else %}
+                    <a style="font-size: 14px; color:green"><b>Комментарий утвержден</b></a>
+                {% endif %}
+                <br><br>
+            {% endfor %}
+        {% else %}
+            <h5>Комментов нет!</h5>
+        {% endif %}
+    {% endif %}
+    <br><br>
+    <h3>Мои комменты на объявления:</h3>
+    {% if mycomments %}
+        {% for comment in mycomments %}
+            <a><b>Объявление:</b></a>
+            <a href="/advertisement/{{ comment.advertisement_id }}" style="font-size: 20px;"><b>{{ comment.advertisement.title }}</b></a><br>
+            <span style="font-size: 12px;"><b>Автор объявления:  {{ comment.advertisement.author.username }} |
+                Дата публикации объявления: {{ comment.advertisement.time_create|date:'d.M.Y' }} г.</b></span><br>
+            <a><b>Мой коммент:</b></a>
+            {{ comment.text }}<br>
+            <span style="font-size: 12px;"><b>Дата публикации коммента: {{ comment.time_create|date:'d.M.Y' }} г.</b></span><br>
+            {% if comment.moderation == True %}
+                <a style="font-size: 14px; color:green"><b>Автор объявления утвердил комментарий!</b></a>
+            {% else %}
+                <a style="font-size: 14px; color:red"><b>Автор объявления пока не утвердил комментарий!</b></a>
+            {% endif %}
+        <br><br>
+        {% endfor %}
+    {% else %}
+        <h5>Комментов нет!</h5>
+    {% endif %}
+{% endblock content %}
